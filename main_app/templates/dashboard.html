@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Dashboard</title>
+</head>
+<body>
+    <h2>Welcome to your dashboard</h2>
+
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit">Logout</button>
+    </form>
+
+    <p>We're fetching your latest transactions...</p>
+    <div id="transactions"></div>
+
+    <script>
+        fetch('/api/transactions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            const container = document.getElementById('transactions');
+            if (Array.isArray(data)) {
+                container.innerHTML = '<ul>' + data.map(txn =>
+                    `<li>${txn.date}: ${txn.name} - $${txn.amount}</li>`
+                ).join('') + '</ul>';
+            } else {
+                container.innerText = 'Error fetching transactions.';
+            }
+        });
+    </script>
+</body>
+</html>
